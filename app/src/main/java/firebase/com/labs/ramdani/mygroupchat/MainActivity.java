@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnSend;
     private EditText edtMessage;
     private RecyclerView rvMessage;
-
+    LinearLayoutManager linearLayoutManager;
     private AppPreference mAppPreference;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
@@ -45,7 +45,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         edtMessage = (EditText) findViewById(R.id.edt_message);
         rvMessage = (RecyclerView) findViewById(R.id.rv_chat);
         rvMessage.setHasFixedSize(true);
-        rvMessage.setLayoutManager(new LinearLayoutManager(this));
+         linearLayoutManager =
+                new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
+        rvMessage.setLayoutManager(linearLayoutManager);
+
 
         mAppPreference = new AppPreference(this);
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             public void onComplete(@NonNull Task<Void> task) {
                                 edtMessage.setText("");
                                 if(task.isSuccessful()){
+                                    linearLayoutManager.scrollToPosition(adapter.getItemCount() - 1);
                                     Log.d("SendMessage", "Sukses");
                                 }else{
                                     Log.d("SendMessage", "failed ");

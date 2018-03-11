@@ -9,13 +9,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/tv_sender"
         android:text="Sender"
-        android:textSize="11sp"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+        android:textSize="20sp"
+        />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tv_message"
         android:text="Message"
-        android:textSize="14sp"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+        android:textSize="18sp"
+        />
 </LinearLayout>
