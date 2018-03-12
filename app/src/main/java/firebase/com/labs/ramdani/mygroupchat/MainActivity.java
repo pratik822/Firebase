@@ -3,6 +3,7 @@ package firebase.com.labs.ramdani.mygroupchat;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         linearLayoutManager =
                 new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
         rvMessage.setLayoutManager(linearLayoutManager);
+        rvMessage.setItemAnimator(new DefaultItemAnimator());
 
 
     }
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 param.put("sender", mAppPreference.getEmail());
                 param.put("message", message);
                 param.put("username", mAppPreference.getusername());
+                edtMessage.setText("");
 
                 mDatabaseReference.child("chat")
                         .push()
@@ -124,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                edtMessage.setText("");
+
                                 if (task.isSuccessful()) {
                                     rvMessage.postDelayed(new Runnable() {
                                         @Override

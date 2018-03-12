@@ -1,38 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_item_list"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+
+    <me.himanshusoni.chatmessageview.ChatMessageView
+
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_bottom"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="12dp"
-        android:orientation="vertical">
+        app:cmv_arrowMargin="2dp"
+        app:cmv_backgroundColor="#88BABABA"
+        app:cmv_backgroundColorPressed="#ffbababa"
+        android:padding="6dp"
+        app:cmv_contentPadding="2dp"
+        app:cmv_cornerRadius="3dp"
+        app:cmv_showArrow="true">
 
-        <TextView
-            android:id="@+id/tv_sender"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/holo_blue_light"
-            android:text="Sender"
-            android:textSize="16sp" />
+            android:layout_margin="1dp"
+            android:orientation="vertical"
+            android:padding="1dp">
 
-        <TextView
-            android:id="@+id/tv_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/chatyou"
-            android:padding="4dp"
-            android:text="Message"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/tv_sender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sender"
+                android:textColor="#b71c1c"
+                android:textSize="16sp" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="web|all"
+                android:linksClickable="true"
+                android:padding="4dp"
+                android:text="Message"
+                android:textColor="#424242"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </me.himanshusoni.chatmessageview.ChatMessageView>
 
 
 </LinearLayout>
