@@ -12,12 +12,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setupUI();
         init();
         intiRecycle();
+
     }
 
     public void setupUI() {
@@ -73,15 +78,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             protected void populateViewHolder(ChatViewHolder viewHolder, Message model, int position) {
                 viewHolder.tvMessage.setText(model.message);
-                viewHolder.tvEmail.setText(model.sender);
+                viewHolder.tvEmail.setText(model.username);
+
             }
         };
         rvMessage.setAdapter(adapter);
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                rvMessage.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(adapter.getItemCount()>0) {
+                            rvMessage.smoothScrollToPosition(rvMessage.getAdapter().getItemCount() - 1);
+                        }
+                    }
+                }, 500);
+            }
+        });
 
         rvMessage.postDelayed(new Runnable() {
             @Override
             public void run() {
-                rvMessage.smoothScrollToPosition(rvMessage.getAdapter().getItemCount() - 1);
+                if(adapter.getItemCount()>0) {
+                    rvMessage.smoothScrollToPosition(rvMessage.getAdapter().getItemCount() - 1);
+                }
             }
         }, 1000);
     }
@@ -94,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Map<String, Object> param = new HashMap<>();
                 param.put("sender", mAppPreference.getEmail());
                 param.put("message", message);
+                param.put("username", mAppPreference.getusername());
 
                 mDatabaseReference.child("chat")
                         .push()

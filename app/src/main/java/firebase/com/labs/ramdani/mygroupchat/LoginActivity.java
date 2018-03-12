@@ -16,6 +16,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -25,13 +33,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
     private FirebaseAuth mFirebaseAuth;
-
+    private DatabaseReference mDatabaseReference;
+    private FirebaseDatabase mFirebaseDatabase;
+    List<User> list = new ArrayList<>();
+    AppPreference mAppPreference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mAppPreference= new AppPreference(LoginActivity.this);
         setupUI();
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mDatabaseReference = mFirebaseDatabase.getReference();
+        mDatabaseReference.child("users");
 
 
     }
@@ -50,6 +65,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btn_login) {
+
 
             boolean isEmptyField = false;
 
@@ -70,6 +86,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             if (!isEmptyField) {
                 progressBar.setVisibility(View.VISIBLE);
+
+
                 mFirebaseAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
@@ -77,13 +95,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     Log.d("mytask", task.toString());
-                                    AppPreference mAppPreference = new AppPreference(LoginActivity.this);
-                                    mAppPreference.setEmail(email);
+
+                                    mDatabaseReference.child("users").addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot task : dataSnapshot.getChildren()) {
+                                                if (email.equalsIgnoreCase(task.getValue(User.class).getEmail())) {
+                                                    mAppPreference.setEmail(email);
+                                                    mAppPreference.setusername(task.getValue(User.class).getUserId());
+                                                    Log.d("this is", task.getValue(User.class).getUserId());
+                                                }
+
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                            Log.e("Count ", "" + databaseError.getMessage());
+                                        }
+                                    });
+
                                     progressBar.setVisibility(View.INVISIBLE);
                                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                     finish();
                                 } else {
                                     Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
+                                    progressBar.setVisibility(View.INVISIBLE);
                                 }
                             }
                         });

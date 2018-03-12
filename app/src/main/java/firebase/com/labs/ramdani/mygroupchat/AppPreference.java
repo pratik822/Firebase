@@ -10,6 +10,7 @@ public class AppPreference {
     private SharedPreferences mPreferences;
     private String PREF_NAME = "MyGroupChat";
     private String KEY_EMAIL = "email";
+    private String KEY_USERNAME = "username";
     private SharedPreferences.Editor editor;
 
     public AppPreference(Context mContext){
@@ -24,7 +25,19 @@ public class AppPreference {
 
     public String getEmail(){
         return  mPreferences.getString(KEY_EMAIL, null);
+
     }
+
+    public void setusername(String email){
+        editor.putString(KEY_USERNAME, email);
+        editor.commit();
+    }
+
+    public String getusername(){
+        return  mPreferences.getString(KEY_USERNAME, null);
+
+    }
+
 
     public void clear(){
         editor.clear();
