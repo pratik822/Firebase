@@ -1,8 +1,8 @@
 package firebase.com.labs.ramdani.mygroupchat;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -15,13 +15,11 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -34,26 +32,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DatabaseReference mDatabaseReference;
 
     private FirebaseRecyclerAdapter<Message, ChatViewHolder> adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setupUI();
+        init();
+        intiRecycle();
+    }
 
+    public void setupUI() {
         btnSend = (Button) findViewById(R.id.btn_send);
         btnSend.setOnClickListener(this);
 
         edtMessage = (EditText) findViewById(R.id.edt_message);
         rvMessage = (RecyclerView) findViewById(R.id.rv_chat);
         rvMessage.setHasFixedSize(true);
-         linearLayoutManager =
+        linearLayoutManager =
                 new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
         rvMessage.setLayoutManager(linearLayoutManager);
 
 
+    }
+
+    public void init() {
         mAppPreference = new AppPreference(this);
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference();
+    }
 
+    public void intiRecycle() {
         adapter = new FirebaseRecyclerAdapter<Message, ChatViewHolder>(
                 Message.class,
                 R.layout.item_row_chat,
@@ -67,13 +76,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         rvMessage.setAdapter(adapter);
+
+        rvMessage.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                rvMessage.smoothScrollToPosition(rvMessage.getAdapter().getItemCount() - 1);
+            }
+        }, 1000);
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.btn_send){
+        if (v.getId() == R.id.btn_send) {
             String message = edtMessage.getText().toString().trim();
-            if (!TextUtils.isEmpty(message)){
+            if (!TextUtils.isEmpty(message)) {
                 Map<String, Object> param = new HashMap<>();
                 param.put("sender", mAppPreference.getEmail());
                 param.put("message", message);
@@ -85,10 +101,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 edtMessage.setText("");
-                                if(task.isSuccessful()){
-                                    linearLayoutManager.scrollToPosition(adapter.getItemCount() - 1);
+                                if (task.isSuccessful()) {
+                                    rvMessage.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            rvMessage.smoothScrollToPosition(rvMessage.getAdapter().getItemCount() - 1);
+                                        }
+                                    }, 500);
+                                    // linearLayoutManager.scrollToPosition(adapter.getItemCount() - 1);
                                     Log.d("SendMessage", "Sukses");
-                                }else{
+                                } else {
                                     Log.d("SendMessage", "failed ");
                                 }
                             }
