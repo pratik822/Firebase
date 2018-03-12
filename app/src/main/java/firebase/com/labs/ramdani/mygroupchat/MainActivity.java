@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -23,7 +24,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btnSend;
+    private ImageView btnSend;
     private EditText edtMessage;
     private RecyclerView rvMessage;
     LinearLayoutManager linearLayoutManager;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void setupUI() {
-        btnSend = (Button) findViewById(R.id.btn_send);
+        btnSend = (ImageView) findViewById(R.id.btn_send);
         btnSend.setOnClickListener(this);
 
         edtMessage = (EditText) findViewById(R.id.edt_message);
