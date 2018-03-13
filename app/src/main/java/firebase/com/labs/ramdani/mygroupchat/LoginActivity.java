@@ -21,9 +21,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -38,17 +42,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseDatabase mFirebaseDatabase;
     List<User> list = new ArrayList<>();
     AppPreference mAppPreference;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.activity_login);
-        mAppPreference= new AppPreference(LoginActivity.this);
+        mAppPreference = new AppPreference(LoginActivity.this);
         setupUI();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference();
-        mDatabaseReference.child("users");
 
 
     }
@@ -61,6 +66,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edtPassword = (EditText) findViewById(R.id.edt_password);
         btnLogin = (Button) findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(this);
+
 
     }
 
@@ -97,26 +103,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     Log.d("mytask", task.toString());
-
-                                    mDatabaseReference.child("users").addValueEventListener(new ValueEventListener() {
+                                    Query query = mDatabaseReference.child("users").orderByChild("email").equalTo(email);
+                                    ValueEventListener valueEventListener = new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             for (DataSnapshot task : dataSnapshot.getChildren()) {
-                                                if (email.equalsIgnoreCase(task.getValue(User.class).getEmail())) {
-                                                    mAppPreference.setEmail(email);
-                                                    mAppPreference.setusername(task.getValue(User.class).getUserId());
-                                                    Log.d("this is", task.getValue(User.class).getUserId());
-                                                }
+                                                mAppPreference.setEmail(email);
+                                                mAppPreference.setusername(task.getValue(User.class).getUserId());
+                                                Log.d("myusers", new Gson().toJson(task.getValue(User.class)));
+
 
                                             }
-
                                         }
 
                                         @Override
                                         public void onCancelled(DatabaseError databaseError) {
-                                            Log.e("Count ", "" + databaseError.getMessage());
+
                                         }
-                                    });
+                                    };
+
+                                    query.addValueEventListener(valueEventListener);
+
 
                                     progressBar.setVisibility(View.INVISIBLE);
                                     startActivity(new Intent(LoginActivity.this, MainActivity.class));

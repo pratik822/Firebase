@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cmv_arrowMargin="2dp"
-        app:cmv_backgroundColor="#88BABABA"
+        app:cmv_backgroundColor="#D3D3D3"
         app:cmv_backgroundColorPressed="#ffbababa"
         android:padding="6dp"
         app:cmv_contentPadding="2dp"
@@ -43,6 +43,13 @@
                 android:text="Message"
                 android:textColor="#424242"
                 android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_ago"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="8sp"
+                android:text="TextView" />
         </LinearLayout>
 
     </me.himanshusoni.chatmessageview.ChatMessageView>

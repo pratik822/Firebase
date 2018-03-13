@@ -26,7 +26,10 @@ dependencies {
     compile 'com.google.firebase:firebase-auth:9.4.0'
     compile 'com.android.support:recyclerview-v7:23.2.1'
     compile 'com.firebaseui:firebase-ui-database:0.5.3'
+    compile 'com.google.code.gson:gson:2.8.1'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     compile 'me.himanshusoni.chatmessageview:chat-message-view:1.0.7'
+
 
 }
 // Add to the bottom of the file

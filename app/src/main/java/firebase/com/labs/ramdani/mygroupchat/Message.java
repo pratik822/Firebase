@@ -7,5 +7,6 @@ package firebase.com.labs.ramdani.mygroupchat;
 public class Message {
     public String username;
     public String message;
+    public String times;
 
 }

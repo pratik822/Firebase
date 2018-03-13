@@ -9,21 +9,17 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +32,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AppPreference mAppPreference;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
-
+    TimeAgo ago;
+    Date date;
     private FirebaseRecyclerAdapter<Message, ChatViewHolder> adapter;
 
     @Override
@@ -46,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setupUI();
         init();
         intiRecycle();
+        date = new Date();
+        ago = new TimeAgo(MainActivity.this);
+
 
     }
 
@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             protected void populateViewHolder(ChatViewHolder viewHolder, Message model, int position) {
                 viewHolder.tvMessage.setText(model.message);
                 viewHolder.tvEmail.setText(model.username);
+                viewHolder.tv_ago.setText(model.times);
 
             }
         };
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 rvMessage.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(adapter.getItemCount()>0) {
+                        if (adapter.getItemCount() > 0) {
                             rvMessage.smoothScrollToPosition(rvMessage.getAdapter().getItemCount() - 1);
                         }
                     }
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rvMessage.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(adapter.getItemCount()>0) {
+                if (adapter.getItemCount() > 0) {
                     rvMessage.smoothScrollToPosition(rvMessage.getAdapter().getItemCount() - 1);
                 }
             }
@@ -119,6 +120,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 param.put("sender", mAppPreference.getEmail());
                 param.put("message", message);
                 param.put("username", mAppPreference.getusername());
+                param.put("times", ago.timeAgo(date));
+
                 edtMessage.setText("");
 
                 mDatabaseReference.child("chat")
@@ -148,13 +151,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static class ChatViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvEmail, tvMessage;
+        TextView tvEmail, tvMessage, tv_ago;
 
         public ChatViewHolder(View itemView) {
             super(itemView);
 
             tvEmail = (TextView) itemView.findViewById(R.id.tv_sender);
             tvMessage = (TextView) itemView.findViewById(R.id.tv_message);
+            tv_ago = (TextView) itemView.findViewById(R.id.tv_ago);
+
         }
     }
 }
